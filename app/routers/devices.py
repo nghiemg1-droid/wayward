@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
@@ -25,6 +25,21 @@ def create_device(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    
+    name = data.name.strip()
+    duplicate = db.scalar(
+        select(Device).where(
+            Device.user_id == current_user.id,
+            func.lower(Device.name) == name.lower(),
+        )
+    )
+    if duplicate is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="You already have a device with this name",
+        )
+    data.name = name
+
     device = Device(user_id=current_user.id, **data.model_dump())
     db.add(device)
     db.commit()
