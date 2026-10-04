@@ -40,3 +40,18 @@ class DeviceOut(BaseModel):
 
 class DeviceCreated(DeviceOut):
     device_token: str
+
+class PingCreate(BaseModel):
+    lat: float = Field(ge=-90, le=90)
+    lng: float = Field(ge=-180, le=180)
+    accuracy_m: float | None = Field(default=None, ge=0)
+
+
+class PingOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    lat: float
+    lng: float
+    accuracy_m: float | None
+    recorded_at: datetime

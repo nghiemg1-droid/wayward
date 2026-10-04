@@ -39,3 +39,19 @@ class Device(Base):
     last_seen: Mapped[datetime | None] = mapped_column(default=None)
 
     owner: Mapped["User"] = relationship(back_populates="devices")
+    pings: Mapped[list["Ping"]] = relationship(
+        back_populates="device", cascade="all, delete-orphan"
+    )
+
+
+class Ping(Base):
+    __tablename__ = "pings"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"), index=True)
+    lat: Mapped[float] = mapped_column()
+    lng: Mapped[float] = mapped_column()
+    accuracy_m: Mapped[float | None] = mapped_column(default=None)
+    recorded_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
+
+    device: Mapped["Device"] = relationship(back_populates="pings")
