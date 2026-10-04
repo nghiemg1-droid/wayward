@@ -36,3 +36,11 @@ summary { cursor: pointer; font-weight: 600; margin-bottom: .4rem; }
   aside { border-right: 0; border-bottom: 1px solid var(--line); }
   #map { height: 55vh; }
 }
+select { font: inherit; padding: .5rem .6rem; border-radius: 8px; border: 1px solid var(--line); width: 100%; background: transparent; color: inherit; }
+input[type="checkbox"] { width: auto; margin-right: .4rem; }
+.toolbar { flex-wrap: wrap; }
+.toolbar a { margin-right: .75rem; }
+.report { max-width: 480px; margin: 0 auto; padding: 1rem; }
+.report dl { display: grid; grid-template-columns: auto 1fr; gap: .25rem 1rem; margin: .5rem 0 0; }
+.report dt { color: var(--muted); }
+.report dd { margin: 0; }

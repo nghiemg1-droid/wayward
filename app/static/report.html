@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wayward - Report position</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Wayward">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="report">
+    <p><a href="/">&larr; Back to the dashboard</a></p>
+    <h1>Report this device's position</h1>
+    <p class="muted">
+      This page sends this device's GPS position to Wayward. It only works while the page is open,
+      so keep it open and the screen on.
+    </p>
+
+    <label for="token">Device token (from "Add a device" on the dashboard)</label>
+    <input id="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
+
+    <label for="interval">Send a position every</label>
+    <select id="interval">
+      <option value="10">10 seconds</option>
+      <option value="30" selected>30 seconds</option>
+      <option value="60">1 minute</option>
+    </select>
+
+    <label><input id="keep-awake" type="checkbox" checked> Keep the screen on while reporting</label>
+
+    <div class="actions" style="margin-top:.75rem">
+      <button id="start" type="button" class="primary">Start</button>
+      <button id="stop" type="button" disabled>Stop</button>
+      <button id="forget" type="button">Forget saved token</button>
+    </div>
+
+    <p id="status" class="muted" role="status">Not reporting.</p>
+    <dl>
+      <dt>Last sent</dt><dd id="last-sent">-</dd>
+      <dt>Accuracy</dt><dd id="last-accuracy">-</dd>
+      <dt>Positions sent</dt><dd id="sent-count">0</dd>
+      <dt>Screen kept on</dt><dd id="awake">no</dd>
+    </dl>
+  </main>
+  <script src="/static/report.js"></script>
+</body>
+</html>

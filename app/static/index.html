@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Wayward</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Wayward">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -27,7 +32,7 @@
   <section id="app-view" hidden>
     <div class="toolbar">
       <strong>Wayward</strong>
-      <span><span id="who" class="muted"></span> <button id="logout-btn" type="button">Log out</button></span>
+      <span><a href="/static/report.html">Report this device</a> <span id="who" class="muted"></span> <button id="logout-btn" type="button">Log out</button></span>
     </div>
     <div class="layout">
       <aside>
