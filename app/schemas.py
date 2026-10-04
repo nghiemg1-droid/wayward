@@ -55,3 +55,13 @@ class PingOut(BaseModel):
     lng: float
     accuracy_m: float | None
     recorded_at: datetime
+
+
+class AlertOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    lat: float
+    lng: float
+    distance_m: float
+    created_at: datetime

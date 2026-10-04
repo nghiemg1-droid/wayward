@@ -1,8 +1,9 @@
 import os
 
-# Phải đặt trước khi import app: dùng khóa thử và database trong bộ nhớ
+# Phải đặt trước khi import app: dùng khóa thử, database trong bộ nhớ, không gửi webhook
 os.environ["SECRET_KEY"] = "test-secret-key-for-pytest-must-be-32-bytes-or-longer"
 os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["ALERT_WEBHOOK_URL"] = ""
 
 import pytest
 from fastapi.testclient import TestClient

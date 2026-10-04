@@ -42,6 +42,9 @@ class Device(Base):
     pings: Mapped[list["Ping"]] = relationship(
         back_populates="device", cascade="all, delete-orphan"
     )
+    alerts: Mapped[list["Alert"]] = relationship(
+        back_populates="device", cascade="all, delete-orphan"
+    )
 
 
 class Ping(Base):
@@ -55,3 +58,16 @@ class Ping(Base):
     recorded_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
 
     device: Mapped["Device"] = relationship(back_populates="pings")
+
+
+class Alert(Base):
+    __tablename__ = "alerts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("devices.id"), index=True)
+    lat: Mapped[float] = mapped_column()
+    lng: Mapped[float] = mapped_column()
+    distance_m: Mapped[float] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(default=utcnow, index=True)
+
+    device: Mapped["Device"] = relationship(back_populates="alerts")

@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./wayward.db"
     secret_key: str
     access_token_expire_minutes: int = 60
+    alert_webhook_url: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env")
 
