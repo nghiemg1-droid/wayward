@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from fastapi import (
     APIRouter,
     BackgroundTasks,
@@ -5,6 +7,7 @@ from fastapi import (
     Header,
     HTTPException,
     Query,
+    Response,
     status,
 )
 from sqlalchemy import select
@@ -33,15 +36,24 @@ def get_device_from_token(
     return device
 
 
-@router.post("/pings", response_model=PingOut, status_code=status.HTTP_201_CREATED)
-def create_ping(
-    data: PingCreate,
+def record_ping(
+    db: Session,
     background_tasks: BackgroundTasks,
-    device: Device = Depends(get_device_from_token),
-    db: Session = Depends(get_db),
-):
+    device: Device,
+    lat: float,
+    lng: float,
+    accuracy_m: float | None,
+    recorded_at: datetime | None = None,
+) -> Ping:
+    """Store a position, update last_seen and raise an alert if the rules say so."""
     now = utcnow()
-    ping = Ping(device_id=device.id, recorded_at=now, **data.model_dump())
+    ping = Ping(
+        device_id=device.id,
+        lat=lat,
+        lng=lng,
+        accuracy_m=accuracy_m,
+        recorded_at=recorded_at or now,
+    )
     device.last_seen = now
     db.add(ping)
     db.commit()
@@ -53,6 +65,60 @@ def create_ping(
         # sending it happens in the background so the device gets a fast response.
         background_tasks.add_task(send_alert_message, format_alert_message(device, alert))
     return ping
+
+
+@router.post("/pings", response_model=PingOut, status_code=status.HTTP_201_CREATED)
+def create_ping(
+    data: PingCreate,
+    background_tasks: BackgroundTasks,
+    device: Device = Depends(get_device_from_token),
+    db: Session = Depends(get_db),
+):
+    return record_ping(db, background_tasks, device, data.lat, data.lng, data.accuracy_m)
+
+
+def parse_timestamp(value: str | None) -> datetime | None:
+    """Read the time a phone says a position was taken (Unix seconds, or milliseconds).
+
+    Phone apps may queue positions while offline and send them later, so the time
+    they report is more accurate than the time we receive them. Values that make no
+    sense (unreadable, in the future, or older than a week) are ignored.
+    """
+    if not value:
+        return None
+    try:
+        seconds = float(value)
+        if seconds > 1e11:  # milliseconds
+            seconds /= 1000
+        moment = datetime.fromtimestamp(seconds, tz=timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        return None
+    now = utcnow()
+    if moment > now + timedelta(minutes=5) or moment < now - timedelta(days=7):
+        return None
+    return moment
+
+
+@router.get("/osmand")
+def report_from_tracking_app(
+    background_tasks: BackgroundTasks,
+    device_token: str = Query(alias="id", min_length=1),
+    lat: float = Query(ge=-90, le=90),
+    lon: float = Query(ge=-180, le=180),
+    accuracy: float | None = Query(default=None, ge=0),
+    timestamp: str | None = None,
+    db: Session = Depends(get_db),
+):
+    """Receive positions from tracking apps such as Traccar Client (OsmAnd-style GET).
+
+    These apps run in the background on a phone and cannot send custom headers, so the
+    device token travels in the `id` query parameter (it can show up in server logs).
+    """
+    device = db.scalar(select(Device).where(Device.device_token == device_token))
+    if device is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid device token")
+    record_ping(db, background_tasks, device, lat, lon, accuracy, parse_timestamp(timestamp))
+    return Response(content="OK", media_type="text/plain")
 
 
 @router.get("/devices/{device_id}/pings", response_model=list[PingOut])
