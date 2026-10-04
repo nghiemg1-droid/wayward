@@ -1,0 +1,38 @@
+:root { color-scheme: light dark; --accent: #2563eb; --danger: #dc2626; --muted: #64748b; --line: #cbd5e1; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+h1, h2 { margin: 0 0 .5rem; }
+h2 { font-size: 1.05rem; }
+button { font: inherit; padding: .5rem .9rem; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--danger); border-color: var(--danger); }
+button:disabled { opacity: .5; cursor: default; }
+input { font: inherit; padding: .5rem .6rem; border-radius: 8px; border: 1px solid var(--line); width: 100%; background: transparent; color: inherit; }
+label { display: block; margin: .5rem 0 .2rem; font-size: .9rem; color: var(--muted); }
+.muted { color: var(--muted); font-size: .9rem; }
+.error { color: var(--danger); min-height: 1.4em; margin: .5rem 0 0; }
+ul { list-style: none; margin: 0 0 1rem; padding: 0; }
+#auth-view { max-width: 360px; margin: 12vh auto 0; padding: 0 1rem; }
+#auth-view .row { display: flex; gap: .5rem; margin-top: 1rem; }
+#auth-view .row button { flex: 1; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .6rem 1rem; border-bottom: 1px solid var(--line); }
+.layout { display: grid; grid-template-columns: 340px 1fr; height: calc(100vh - 3.6rem); }
+aside { padding: 1rem; overflow-y: auto; border-right: 1px solid var(--line); }
+#map { min-height: 300px; }
+.device-btn { display: block; width: 100%; text-align: left; margin-bottom: .4rem; }
+.device-btn.selected { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.device-btn .meta { display: block; font-size: .85rem; color: var(--muted); }
+details { margin-bottom: 1rem; }
+summary { cursor: pointer; font-weight: 600; margin-bottom: .4rem; }
+.token-box { border: 1px solid var(--accent); border-radius: 8px; padding: .75rem; margin-bottom: 1rem; }
+.token-box code { display: block; word-break: break-all; margin: .5rem 0; font-size: .85rem; }
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); }
+  #map { height: 55vh; }
+}

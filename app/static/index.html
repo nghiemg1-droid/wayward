@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wayward</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <section id="auth-view" hidden>
+    <h1>Wayward</h1>
+    <p class="muted">Track your devices and get alerted when one leaves home.</p>
+    <form id="auth-form">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password (at least 8 characters)</label>
+      <input id="password" type="password" autocomplete="current-password" minlength="8" required>
+      <div class="row">
+        <button id="login-btn" type="submit" class="primary">Log in</button>
+        <button id="register-btn" type="button">Create account</button>
+      </div>
+      <p id="auth-message" class="error" role="alert"></p>
+    </form>
+  </section>
+
+  <section id="app-view" hidden>
+    <div class="toolbar">
+      <strong>Wayward</strong>
+      <span><span id="who" class="muted"></span> <button id="logout-btn" type="button">Log out</button></span>
+    </div>
+    <div class="layout">
+      <aside>
+        <h2>Devices</h2>
+        <ul id="device-list"></ul>
+        <p id="empty-hint" class="muted" hidden>No devices yet. Add one below.</p>
+
+        <div id="device-detail" hidden>
+          <h2 id="detail-name"></h2>
+          <p id="detail-meta" class="muted"></p>
+          <div class="actions"><button id="delete-btn" type="button" class="danger">Delete device</button></div>
+          <h2 style="margin-top:1rem">Alerts</h2>
+          <ul id="alert-list"></ul>
+          <p id="no-alerts" class="muted" hidden>No alerts for this device.</p>
+        </div>
+
+        <div id="token-box" class="token-box" hidden>
+          <strong>Device token for "<span id="token-name"></span>"</strong>
+          <p class="muted">Shown only once. The device uses it to report its position. Keep it secret.</p>
+          <code id="token-value"></code>
+          <div class="actions">
+            <button id="copy-token" type="button">Copy</button>
+            <button id="hide-token" type="button">I saved it</button>
+          </div>
+        </div>
+
+        <details>
+          <summary>Add a device</summary>
+          <form id="device-form">
+            <label for="device-name">Name</label>
+            <input id="device-name" maxlength="100" required>
+            <label for="device-lat">Home latitude (optional)</label>
+            <input id="device-lat" type="number" step="any" min="-90" max="90">
+            <label for="device-lng">Home longitude (optional)</label>
+            <input id="device-lng" type="number" step="any" min="-180" max="180">
+            <label for="device-radius">Home radius in meters</label>
+            <input id="device-radius" type="number" min="50" max="50000" value="500">
+            <div class="actions" style="margin-top:.75rem">
+              <button id="use-location" type="button">Use my location</button>
+              <button type="submit" class="primary">Add device</button>
+            </div>
+            <p id="form-message" class="error" role="alert"></p>
+          </form>
+        </details>
+      </aside>
+      <div id="map"></div>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
