@@ -1,5 +1,7 @@
 # Wayward
 
+[![Tests](https://github.com/nghiemg1-droid/wayward/actions/workflows/ci.yml/badge.svg)](https://github.com/nghiemg1-droid/wayward/actions/workflows/ci.yml)
+
 Wayward is a REST API for tracking where your electronic devices are. Each device reports its GPS position to your account. When a device stays outside its home area for several consecutive readings, Wayward records an alert and notifies you through a webhook.
 
 **Status: work in progress.** The core loop works end to end: accounts, devices, location reporting, alert detection and notification. A dashboard and smarter "usual place" detection are next (see the roadmap).
@@ -135,7 +137,7 @@ tests/           pytest suite
 - [x] Distance check (haversine) against the device's home location and radius
 - [x] Theft-risk alerts with debouncing and a cooldown, delivered through a webhook
 - [x] Device simulator script
-- [ ] Continuous integration (run the tests on every push)
+- [x] Continuous integration (run the tests on every push)
 - [ ] Map dashboard showing each device's latest position
 - [ ] Learn a device's usual places from its history instead of one fixed radius
 - [ ] "Device went silent" alert
