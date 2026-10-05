@@ -20,6 +20,7 @@ from app.routers.devices import get_owned_device
 from app.schemas import AlertOut, PingCreate, PingOut
 from app.services.alerting import check_for_alert, format_alert_message
 from app.services.notifier import send_alert_message
+from app.services.retention import maybe_prune_old_pings
 
 router = APIRouter(tags=["pings"])
 
@@ -47,6 +48,7 @@ def record_ping(
 ) -> Ping:
     """Store a position, update last_seen and raise an alert if the rules say so."""
     now = utcnow()
+    maybe_prune_old_pings(db, now)
     ping = Ping(
         device_id=device.id,
         lat=lat,

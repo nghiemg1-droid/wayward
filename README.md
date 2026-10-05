@@ -130,6 +130,35 @@ tests/           pytest suite
 - **Notifications run in the background**, and webhook failures are logged instead of breaking the ping request.
 - **Tests override the database dependency** to run on a fresh in-memory database for every test.
 
+## Deploying (Render + Neon)
+
+Wayward can run on free tiers: a Render web service for the app and a Neon Postgres database.
+
+- Build command: pip install -r requirements.txt
+- Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT --no-access-log
+- Health check path: /health
+- Environment variables: SECRET_KEY (a new random value), DATABASE_URL (the Neon connection string; postgres:// and postgresql:// URLs are both accepted), ACCESS_TOKEN_EXPIRE_MINUTES
+- Create your own account first, then set ALLOW_REGISTRATION=false so strangers cannot sign up.
+
+Free-tier limits to know about: a free Render web service spins down after 15 minutes without requests and takes about a minute to wake up, and Render's own free Postgres expires after 30 days, which is why the database lives on Neon. Check the providers' current terms before relying on them.
+
+## Background tracking from a phone
+
+A web page cannot report positions in the background on iPhone. Instead, Wayward accepts the OsmAnd-style HTTP GET used by tracking apps such as Traccar Client:
+
+- Server URL in the app: https://your-service.onrender.com/osmand
+- Device identifier in the app: the device token shown once when the device was created
+- Parameters read: id (the token), lat, lon, accuracy (optional), timestamp (optional, Unix seconds)
+
+The phone and iOS decide how often positions are really delivered in the background. The token travels in the query string because these apps cannot send custom headers, so access logging is disabled in the start command and the token should be treated as a password for that one device.
+
+## Operating limits and safety
+
+- Positions older than PING_RETENTION_DAYS (default 30) are deleted automatically, at most once every six hours, so the free database does not fill up.
+- After 5 failed logins for the same email within 15 minutes, further attempts for that email get a 429 response until the window passes. The counters are kept in memory, so they reset when the service restarts, and this assumes a single worker.
+- ALLOW_REGISTRATION=false closes sign-ups.
+- Only track your own devices, or devices whose owners agreed to it.
+
 ## Roadmap
 
 - [x] Accounts, JWT authentication and device management
@@ -138,7 +167,8 @@ tests/           pytest suite
 - [x] Theft-risk alerts with debouncing and a cooldown, delivered through a webhook
 - [x] Device simulator script
 - [x] Continuous integration (run the tests on every push)
-- [ ] Map dashboard showing each device's latest position
+- [x] Map dashboard showing each device's latest position
 - [ ] Learn a device's usual places from its history instead of one fixed radius
 - [ ] "Device went silent" alert
-- [ ] Docker and a live deployment
+- [x] Live deployment (Render + Neon)
+- [ ] Dockerfile

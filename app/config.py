@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     alert_webhook_url: str | None = None
     allow_registration: bool = True
+    ping_retention_days: int = 30
 
     model_config = SettingsConfigDict(env_file=".env")
 
